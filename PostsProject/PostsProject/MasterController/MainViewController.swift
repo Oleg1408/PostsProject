@@ -10,6 +10,7 @@ import Alamofire
 class MainViewController: UIViewController {
     
     @IBOutlet weak var mainUITableView: UITableView!
+    @IBOutlet weak var sortedButton: UIBarButtonItem!
     
     var postsArray: [Posts] = []
     var responseData = ResponseDataPost()
@@ -24,32 +25,62 @@ class MainViewController: UIViewController {
         responseData.loadDataPost { value in
             self.postsArray = value
             DispatchQueue.main.async {
-                self.sortedData = self.postsArray.sorted(by: { ($0.timeshamp ?? 0) > ($1.timeshamp ?? 0) })
+                self.sortedData = self.postsArray.sorted(by: { ($0.timeshamp ?? Date()) > ($1.timeshamp ?? Date()) })
                 self.sortedLikes = self.postsArray.sorted(by: { ($0.likesCount ?? 0) > ($1.likesCount ?? 0) })
                 self.mainUITableView.reloadData()
             }
         }
     }
     
+    
     @IBAction func pressSortedButton(_ sender: Any) {
         
-        let actionSheet = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(title: "Sorting", message: nil, preferredStyle: .actionSheet)
         
-        actionSheet.addAction(UIAlertAction(title: "По дате", style: .default, handler: { [weak self] (_) in
+        actionSheet.addAction(UIAlertAction(title: "By date", style: .default, handler: { [weak self] (_) in
             guard let self = self else { return }
             self.postsArray = self.sortedData
             self.mainUITableView.reloadData()
         }))
         
-        actionSheet.addAction(UIAlertAction(title: "По рейтингу", style: .default, handler: { [weak self] (_) in
+        actionSheet.addAction(UIAlertAction(title: "By rating", style: .default, handler: { [weak self] (_) in
             guard let self = self else { return }
             self.postsArray = self.sortedLikes
             self.mainUITableView.reloadData()
         }))
         
-        actionSheet.addAction(UIAlertAction(title: "Отмена", style: .cancel, handler: nil))
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(actionSheet, animated: true, completion: nil)
     }
+    
+    
+    
+   // MARK: - load data (id)
+    
+    func loadPostDetails(postID: Int, completion: @escaping (PostDetails?) -> Void) {
+        let postDetailsURLString = "https://raw.githubusercontent.com/anton-natife/jsons/master/api/posts/\(postID).json"
+        
+        if let postDetailsURL = URL(string: postDetailsURLString) {
+            URLSession.shared.dataTask(with: postDetailsURL) { (data, _, _) in
+                if let data = data {
+                    do {
+                        let decoder = JSONDecoder()
+                        let postDetails = try decoder.decode(PostDetails.self, from: data)
+                        completion(postDetails)
+                    } catch {
+                        print("Ошибка при декодировании данных о посте: \(error)")
+                        completion(nil)
+                    }
+                } else {
+                    completion(nil)
+                }
+            }.resume()
+        } else {
+            print("Некорректная URL-строка для данных о посте: \(postDetailsURLString)")
+            completion(nil)
+        }
+    }
+    
 }
 
 
@@ -76,37 +107,19 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
         let post = postsArray[indexPath.row]
         if let postID = post.postId {
-            let postDetailsURLString = "https://raw.githubusercontent.com/anton-natife/jsons/master/api/posts/\(postID).json"
-            
-            if let postDetailsURL = URL(string: postDetailsURLString) {
-                URLSession.shared.dataTask(with: postDetailsURL) { [weak self] (data, response, error) in
-                    if let data = data {
-                        do {
-                            let decoder = JSONDecoder()
-                            let postDetails = try decoder.decode(PostDetails.self, from: data)
-                            DispatchQueue.main.async {
-                                if let detailsViewController = self?.storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController {
-                                    detailsViewController.postDetails = postDetails
-                                    self?.navigationController?.pushViewController(detailsViewController, animated: true)
-                                }
-                            }
-                        } catch {
-                            print("Ошибка при декодировании данных о посте: \(error)")
-                        }
-                    } else if let error = error {
-                        print("Ошибка при загрузке данных о посте: \(error.localizedDescription)")
+            loadPostDetails(postID: postID) { [weak self] postDetails in
+                DispatchQueue.main.async {
+                    if let detailsViewController = self?.storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController {
+                        detailsViewController.postDetails = postDetails
+                        self?.navigationController?.pushViewController(detailsViewController, animated: true)
                     }
-                }.resume()
-            } else {
-                print("Некорректная URL-строка для данных о посте: \(postDetailsURLString)")
+                }
             }
         } else {
             print("ID поста отсутствует или не правильно передан.")
         }
-        
     }
 }
 

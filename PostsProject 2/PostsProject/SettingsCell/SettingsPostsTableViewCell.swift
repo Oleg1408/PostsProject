@@ -29,9 +29,18 @@ class SettingsPostsTableViewCell: UITableViewCell {
         self.titleLable.text = posts.title
         self.mainTextLable.text = posts.previewText
         self.countLikesLable.text = "\(posts.likesCount ?? 0)"
-        self.timePostLable.text = "\(posts.timeshamp ?? 0)"
-        self.heartImageView.image = UIImage(named: "heart")
-    }
+        if let date = posts.timeshamp {
+             let dateFormatter = DateFormatter()
+             dateFormatter.dateFormat = "dd-MM-yyyy" // Настройте формат даты по вашему желанию
+             let dateString = dateFormatter.string(from: date)
+             self.timePostLable.text = dateString
+         } else {
+             self.timePostLable.text = "Дата отсутствует"
+         }
+         
+         self.heartImageView.image = UIImage(named: "heart")
+    
+}
     
     @IBAction func testButton(_ sender: Any) {
         

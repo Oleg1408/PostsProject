@@ -22,24 +22,33 @@ class SettingsPostsTableViewCell: UITableViewCell {
     }
     
     private func buttonSettings() {
-        pressTextButton.setTitle("Развернуть", for: .normal)
+        pressTextButton.setTitle("Expand", for: .normal)
     }
     
     func configur(posts: Posts) {
         self.titleLable.text = posts.title
         self.mainTextLable.text = posts.previewText
         self.countLikesLable.text = "\(posts.likesCount ?? 0)"
-        self.timePostLable.text = "\(posts.timeshamp ?? 0)"
         self.heartImageView.image = UIImage(named: "heart")
+        
+        if let date = posts.timeshamp {
+             let dateFormatter = DateFormatter()
+             dateFormatter.dateFormat = "dd-MM-yyyy"
+             let dateString = dateFormatter.string(from: date)
+             self.timePostLable.text = dateString
+         } else {
+             self.timePostLable.text = "no date"
+         }
+        
     }
     
-    @IBAction func testButton(_ sender: Any) {
-        
+    @IBAction func pressButtonText(_ sender: Any) {
+    
         if mainTextLable.numberOfLines == 2 {
-            pressTextButton.setTitle("Свернуть", for: .normal)
+            pressTextButton.setTitle("Collaps", for: .normal)
             mainTextLable.numberOfLines = 0
         } else {
-            pressTextButton.setTitle("Развернуть", for: .normal)
+            pressTextButton.setTitle("Expand", for: .normal)
             mainTextLable.numberOfLines = 2
         }
         mainTextLable.sizeToFit()

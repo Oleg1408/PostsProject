@@ -24,7 +24,7 @@ class MainViewController: UIViewController {
         responseData.loadDataPost { value in
             self.postsArray = value
             DispatchQueue.main.async {
-                self.sortedData = self.postsArray.sorted(by: { ($0.timeshamp ?? 0) > ($1.timeshamp ?? 0) })
+                self.sortedData = self.postsArray.sorted(by: { ($0.timeshamp ?? Date()) > ($1.timeshamp ?? Date()) })
                 self.sortedLikes = self.postsArray.sorted(by: { ($0.likesCount ?? 0) > ($1.likesCount ?? 0) })
             }
             self.mainUITableView.reloadData()
