@@ -21,6 +21,7 @@
 		683350C42AA3B7AA00A2DD96 /* SettingsPostsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 683350C22AA3B7AA00A2DD96 /* SettingsPostsTableViewCell.xib */; };
 		683350C62AA3BB4300A2DD96 /* RegisterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683350C52AA3BB4300A2DD96 /* RegisterCell.swift */; };
 		683350C82AA3E2B900A2DD96 /* ResponseDataPosts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683350C72AA3E2B900A2DD96 /* ResponseDataPosts.swift */; };
+		683350DB2AA7043E00A2DD96 /* ModelsOfDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683350DA2AA7043E00A2DD96 /* ModelsOfDetails.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		683350C22AA3B7AA00A2DD96 /* SettingsPostsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsPostsTableViewCell.xib; sourceTree = "<group>"; };
 		683350C52AA3BB4300A2DD96 /* RegisterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterCell.swift; sourceTree = "<group>"; };
 		683350C72AA3E2B900A2DD96 /* ResponseDataPosts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseDataPosts.swift; sourceTree = "<group>"; };
+		683350DA2AA7043E00A2DD96 /* ModelsOfDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelsOfDetails.swift; sourceTree = "<group>"; };
 		70848512294D11595E4CB433 /* Pods-PostsProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PostsProject.release.xcconfig"; path = "Target Support Files/Pods-PostsProject/Pods-PostsProject.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -122,6 +124,7 @@
 			children = (
 				683350A62AA1BB0100A2DD96 /* Posts.swift */,
 				683350A52AA1BB0100A2DD96 /* DataOfPosts.swift */,
+				683350DA2AA7043E00A2DD96 /* ModelsOfDetails.swift */,
 			);
 			name = ModelsOfPosts;
 			sourceTree = "<group>";
@@ -267,6 +270,7 @@
 				6833508E2AA1170F00A2DD96 /* SceneDelegate.swift in Sources */,
 				683350A42AA1B4C300A2DD96 /* DetailsViewController.swift in Sources */,
 				683350C62AA3BB4300A2DD96 /* RegisterCell.swift in Sources */,
+				683350DB2AA7043E00A2DD96 /* ModelsOfDetails.swift in Sources */,
 				683350A72AA1BB0100A2DD96 /* DataOfPosts.swift in Sources */,
 				683350C82AA3E2B900A2DD96 /* ResponseDataPosts.swift in Sources */,
 			);

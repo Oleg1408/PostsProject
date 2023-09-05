@@ -13,20 +13,42 @@ class MainViewController: UIViewController {
     
     var postsArray: [Posts] = []
     var responseData = ResponseDataPost()
-        
+    
+    var sortedData = [Posts]()
+    var sortedLikes = [Posts]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigatorCV()
         registerCell()
         
         responseData.loadDataPost { value in
             self.postsArray = value
-            self.mainUITableView.reloadData()
+            DispatchQueue.main.async {
+                self.sortedData = self.postsArray.sorted(by: { ($0.timeshamp ?? 0) > ($1.timeshamp ?? 0) })
+                self.sortedLikes = self.postsArray.sorted(by: { ($0.likesCount ?? 0) > ($1.likesCount ?? 0) })
+                self.mainUITableView.reloadData()
+            }
         }
     }
     
-    private func navigatorCV() {
-        navigationController?.navigationBar.isHidden = false
+    @IBAction func pressSortedButton(_ sender: Any) {
+        
+        let actionSheet = UIAlertController(title: "Сортировка", message: nil, preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: "По дате", style: .default, handler: { [weak self] (_) in
+            guard let self = self else { return }
+            self.postsArray = self.sortedData
+            self.mainUITableView.reloadData()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "По рейтингу", style: .default, handler: { [weak self] (_) in
+            guard let self = self else { return }
+            self.postsArray = self.sortedLikes
+            self.mainUITableView.reloadData()
+        }))
+        
+        actionSheet.addAction(UIAlertAction(title: "Отмена", style: .cancel, handler: nil))
+        present(actionSheet, animated: true, completion: nil)
     }
 }
 
@@ -55,9 +77,36 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let main = UIStoryboard(name: "Main", bundle: nil)
-        if  let detailsController = main.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController {
-            navigationController?.pushViewController(detailsController, animated: true)
+        let post = postsArray[indexPath.row]
+        if let postID = post.postId {
+            let postDetailsURLString = "https://raw.githubusercontent.com/anton-natife/jsons/master/api/posts/\(postID).json"
+            
+            if let postDetailsURL = URL(string: postDetailsURLString) {
+                URLSession.shared.dataTask(with: postDetailsURL) { [weak self] (data, response, error) in
+                    if let data = data {
+                        do {
+                            let decoder = JSONDecoder()
+                            let postDetails = try decoder.decode(PostDetails.self, from: data)
+                            DispatchQueue.main.async {
+                                if let detailsViewController = self?.storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController {
+                                    detailsViewController.postDetails = postDetails
+                                    self?.navigationController?.pushViewController(detailsViewController, animated: true)
+                                }
+                            }
+                        } catch {
+                            print("Ошибка при декодировании данных о посте: \(error)")
+                        }
+                    } else if let error = error {
+                        print("Ошибка при загрузке данных о посте: \(error.localizedDescription)")
+                    }
+                }.resume()
+            } else {
+                print("Некорректная URL-строка для данных о посте: \(postDetailsURLString)")
+            }
+        } else {
+            print("ID поста отсутствует или не правильно передан.")
         }
+        
     }
 }
+

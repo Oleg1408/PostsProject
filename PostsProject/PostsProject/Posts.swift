@@ -1,4 +1,5 @@
 import Foundation
+
 struct Posts : Codable {
 	let postId : Int?
 	let timeshamp : Int?
@@ -23,4 +24,6 @@ struct Posts : Codable {
         previewText = try values.decodeIfPresent(String.self, forKey: .previewText)
         likesCount = try values.decodeIfPresent(Int.self, forKey: .likesCount)
 	}
+
 }
+
