@@ -55,7 +55,7 @@ class MainViewController: UIViewController {
     
     
     
-   // MARK: - load data (id)
+    // MARK: - load data (id)
     
     func loadPostDetails(postID: Int, completion: @escaping (PostDetails?) -> Void) {
         let postDetailsURLString = "https://raw.githubusercontent.com/anton-natife/jsons/master/api/posts/\(postID).json"
@@ -71,8 +71,6 @@ class MainViewController: UIViewController {
                         print("Ошибка при декодировании данных о посте: \(error)")
                         completion(nil)
                     }
-                } else {
-                    completion(nil)
                 }
             }.resume()
         } else {
@@ -80,7 +78,6 @@ class MainViewController: UIViewController {
             completion(nil)
         }
     }
-    
 }
 
 
@@ -118,7 +115,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }
         } else {
-            print("ID поста отсутствует или не правильно передан.")
+            print("ID post is missing or incorrectly submitted.")
         }
     }
 }

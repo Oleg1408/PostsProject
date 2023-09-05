@@ -32,19 +32,19 @@ class SettingsPostsTableViewCell: UITableViewCell {
         self.heartImageView.image = UIImage(named: "heart")
         
         if let date = posts.timeshamp {
-             let dateFormatter = DateFormatter()
-             dateFormatter.dateFormat = "dd-MM-yyyy"
-             let dateString = dateFormatter.string(from: date)
-             self.timePostLable.text = dateString
-         } else {
-             self.timePostLable.text = "no date"
-         }
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "dd-MM-yyyy"
+            let dateString = dateFormatter.string(from: date)
+            self.timePostLable.text = dateString
+        } else {
+            self.timePostLable.text = "no date"
+        }
         
     }
     
     @IBAction func pressButtonText(_ sender: Any) {
-    
-        if mainTextLable.numberOfLines == 2 {
+        
+        if mainTextLable.numberOfLines >= 1 {
             pressTextButton.setTitle("Collaps", for: .normal)
             mainTextLable.numberOfLines = 0
         } else {
