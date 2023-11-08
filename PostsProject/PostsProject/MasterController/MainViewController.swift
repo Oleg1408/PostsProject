@@ -68,13 +68,13 @@ class MainViewController: UIViewController {
                         let postDetails = try decoder.decode(PostDetails.self, from: data)
                         completion(postDetails)
                     } catch {
-                        print("Ошибка при декодировании данных о посте: \(error)")
+                        print("Error decode post: \(error)")
                         completion(nil)
                     }
                 }
             }.resume()
         } else {
-            print("Некорректная URL-строка для данных о посте: \(postDetailsURLString)")
+            print("Wrong URL: \(postDetailsURLString)")
             completion(nil)
         }
     }
