@@ -25,7 +25,7 @@ class DetailsViewController: UIViewController {
         
         config()
     }
-    
+        
     private func config() {
         if let postDetails = postDetails?.post {
             titleText.text = postDetails.title ?? ""

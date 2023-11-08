@@ -28,7 +28,7 @@ class SettingsPostsTableViewCell: UITableViewCell {
     func configur(posts: Posts) {
         self.titleLable.text = posts.title
         self.mainTextLable.text = posts.previewText
-        self.countLikesLable.text = "\(posts.likesCount ?? 0)"
+        self.countLikesLable.text = "\(posts.likesCount)"
         self.heartImageView.image = UIImage(named: "heart")
         
         if let date = posts.timeshamp {

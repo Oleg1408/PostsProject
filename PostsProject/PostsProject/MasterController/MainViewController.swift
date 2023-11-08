@@ -15,6 +15,8 @@ class MainViewController: UIViewController {
     var postsArray: [Posts] = []
     var responseData = ResponseDataPost()
     
+    var responceDetails = LoadPost()
+    
     var sortedData = [Posts]()
     var sortedLikes = [Posts]()
     
@@ -26,9 +28,11 @@ class MainViewController: UIViewController {
             self.postsArray = value
             DispatchQueue.main.async {
                 self.sortedData = self.postsArray.sorted(by: { ($0.timeshamp ?? Date()) > ($1.timeshamp ?? Date()) })
-                self.sortedLikes = self.postsArray.sorted(by: { ($0.likesCount ?? 0) > ($1.likesCount ?? 0) })
+                self.sortedLikes = self.postsArray.sorted(by: { $0.likesCount > $1.likesCount })
                 self.mainUITableView.reloadData()
             }
+        } failure: { error in
+            print("An error occurred while loading the data: \(error.localizedDescription)")
         }
     }
     
@@ -52,38 +56,14 @@ class MainViewController: UIViewController {
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(actionSheet, animated: true, completion: nil)
     }
-    
-    
-    
-    // MARK: - load data (id)
-    
-    func loadPostDetails(postID: Int, completion: @escaping (PostDetails?) -> Void) {
-        let postDetailsURLString = "https://raw.githubusercontent.com/anton-natife/jsons/master/api/posts/\(postID).json"
-        
-        if let postDetailsURL = URL(string: postDetailsURLString) {
-            URLSession.shared.dataTask(with: postDetailsURL) { (data, _, _) in
-                if let data = data {
-                    do {
-                        let decoder = JSONDecoder()
-                        let postDetails = try decoder.decode(PostDetails.self, from: data)
-                        completion(postDetails)
-                    } catch {
-                        print("Error decode post: \(error)")
-                        completion(nil)
-                    }
-                }
-            }.resume()
-        } else {
-            print("Wrong URL: \(postDetailsURLString)")
-            completion(nil)
-        }
-    }
 }
 
 
 // MARK: - Settings TableView
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return postsArray.count
@@ -104,19 +84,27 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.isUserInteractionEnabled = false
         let post = postsArray[indexPath.row]
         if let postID = post.postId {
-            loadPostDetails(postID: postID) { [weak self] postDetails in
+            responceDetails.loadPostDetails(postID: postID) { [weak self] postDetails in
                 DispatchQueue.main.async {
-                    if let detailsViewController = self?.storyboard?.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController {
-                        detailsViewController.postDetails = postDetails
-                        self?.navigationController?.pushViewController(detailsViewController, animated: true)
+                    let storyboard = UIStoryboard(name: "DetailsScreen", bundle: nil)
+                    guard let detailsViewController = storyboard.instantiateViewController(withIdentifier: "DetailsViewController") as? DetailsViewController else {
+                        print("Failed to instantiate DetailsViewController from the second storyboard.")
+                        tableView.isUserInteractionEnabled = true
+                        return
                     }
+                    detailsViewController.postDetails = postDetails
+                    self?.navigationController?.pushViewController(detailsViewController, animated: true)
+                    tableView.isUserInteractionEnabled = true  
                 }
             }
         } else {
             print("ID post is missing or incorrectly submitted.")
+            tableView.isUserInteractionEnabled = true
         }
     }
+
 }
 

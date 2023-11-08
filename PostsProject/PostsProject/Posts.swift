@@ -3,9 +3,9 @@ import Foundation
 struct Posts: Codable {
     let postId: Int?
     let timeshamp: Date?
-    let title: String?
-    let previewText: String?
-    let likesCount: Int?
+    let title: String
+    let previewText: String
+    let likesCount: Int
 
     enum CodingKeys: String, CodingKey {
         case postId = "postId"
@@ -17,10 +17,10 @@ struct Posts: Codable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        postId = try values.decodeIfPresent(Int.self, forKey: .postId)
-        title = try values.decodeIfPresent(String.self, forKey: .title)
-        previewText = try values.decodeIfPresent(String.self, forKey: .previewText)
-        likesCount = try values.decodeIfPresent(Int.self, forKey: .likesCount)
+        postId = try values.decodeIfPresent(Int.self, forKey: .postId) 
+        title = try values.decodeIfPresent(String.self, forKey: .title) ?? ""
+        previewText = try values.decodeIfPresent(String.self, forKey: .previewText) ?? ""
+        likesCount = try values.decodeIfPresent(Int.self, forKey: .likesCount) ?? 0
 
         if let timestamp = try values.decodeIfPresent(Int.self, forKey: .timeshamp) {
             timeshamp = Date(timeIntervalSince1970: TimeInterval(timestamp))
